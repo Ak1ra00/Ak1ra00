@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Draw the activity field report from live contribution data.
+"""Draw the btop-style activity panel from live contribution data.
 
-.github/workflows/activity.yml runs this daily and publishes desktop and compact SVGs to the
+.github/workflows/activity.yml runs this daily and publishes the two SVGs to the
 `output` branch, so main's history stays free of bot commits.
 
     tools/activity.py --out DIR                   live data (needs GITHUB_TOKEN)
@@ -9,7 +9,7 @@
     tools/activity.py --out DIR --placeholder     the honest "first sync pending" panel
     tools/activity.py --out DIR --demo            synthetic data, for local previews only
 
-Writes DIR/activity-{dark,light}.svg and matching -compact.svg variants. The login comes from
+Writes DIR/activity-dark.svg and DIR/activity-light.svg. The login comes from
 --login, else $GITHUB_REPOSITORY_OWNER, else Ak1ra00. Standard library only.
 """
 
@@ -26,8 +26,7 @@ import urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-from svgkit import ASSETS, FULL_W, THEMES, n  # noqa: E402
-from design import document, display, display_width, label, rect, rule  # noqa: E402
+from svgkit import ASSETS, FULL_W, MARGIN, THEMES, Doc, n  # noqa: E402
 
 API = "https://api.github.com/graphql"
 QUERY = """
@@ -172,103 +171,218 @@ def summarize(days, total=None):
 
 
 # ---------------------------------------------------------------- drawing --
+# A btop window: rounded boxes whose titles sit in the border between ┐ and ┌,
+# a dotted area graph coloured by height, and segmented meters, all in the
+# Oracle btop theme (teal idle -> violet busy -> amber hot).
 
-H = 360
-COMPACT_H = 500
+H = 320
+SIZE = 12            # terminal text; box strokes match the font's box-drawing weight
+CW = 0.6 * SIZE      # one terminal cell
+LINE = 0.1 * SIZE    # thickness of ─ in JetBrains Mono
+
+BX, BY, BW, BH = 32, 38, FULL_W - 64, 248      # the btop box
+GX0, GX1, GY0, GY1 = 78, 524, 70, 236          # graph: dot centres span this
+SX, SY, SW, SH = 546, 58, 288, 212             # the stats box inside it
+WEEKS = 53                                     # columns when there is no data yet
 
 
-def graph(d, st, mode, x, y, width, height):
-    """Weekly bars, with a stable baseline even for a single or all-zero week."""
-    weeks = st["weeks"] if st else []
-    values = [count for _, count in weeks] or [0] * 53
-    peak = max(values)
-    count = len(values)
-    pitch = width / count
-    bar_width = min(12, max(1, pitch * 0.65))
-    out = [label(d, x, y - 17, "WEEKLY CONTRIBUTIONS", 10),
-           label(d, x + width, y - 17, f"{peak:,} / WK" if st else "— / WK", 10, anchor="end")]
-    for ratio in (0, 0.5, 1):
-        gy = y + height * ratio
-        out.append(rule(d, x, gy, x + width, gy,
-                        extra='stroke-dasharray="2 5"' if ratio < 1 else ''))
-    for i, value in enumerate(values):
-        bx = x + i * pitch + (pitch - bar_width) / 2
-        bh = value / peak * height if peak else 0
-        # A zero is a baseline mark, never a fabricated contribution.
-        fill = "accent" if value and value == peak else "fg_soft"
-        if value:
-            out.append(rect(d, bx, y + height - bh, bar_width, bh, fill, radius=1))
+def _hex(rgb):
+    return "#%02x%02x%02x" % tuple(round(v) for v in rgb)
+
+
+def _mix(a, b, t):
+    a, b = (tuple(int(h[i:i + 2], 16) for i in (1, 3, 5)) for h in (a, b))
+    return _hex(x + (y - x) * t for x, y in zip(a, b))
+
+
+def ramp_stops(d):
+    return d.c("cyan"), d.c("violet"), d.c("amber_bright" if d.theme == "dark" else "amber")
+
+
+def ramp(d, t):
+    lo, mid, hi = ramp_stops(d)
+    return _mix(lo, mid, t / 0.5) if t <= 0.5 else _mix(mid, hi, (t - 0.5) / 0.5)
+
+
+def box(d, x, y, w, h, r):
+    return (f'<rect x="{n(x)}" y="{n(y)}" width="{n(w)}" height="{n(h)}" rx="{r}" '
+            f'fill="none" stroke="{d.c("box")}" stroke-width="{n(LINE)}"/>')
+
+
+def tag(d, x, y, parts, top=True):
+    """A btop title in the border line at y: ┐title┌ on top, ┘title└ at the bottom."""
+    s = "".join(p[0] for p in parts)
+    left, right = ("┐", "┌") if top else ("┘", "└")
+    base = y + 0.37 * SIZE  # puts the glyphs' horizontal stroke on the line
+    x_end = x + (len(s) + 1) * CW
+    return "".join([
+        f'<rect x="{n(x + 0.3 * SIZE)}" y="{n(y - 1.5)}" width="{n(x_end - x)}" '
+        f'height="3" fill="{d.c("bg")}"/>',
+        d.text(x, base, left, SIZE, 400, "box"),
+        d.rich(x + CW, base, parts, SIZE),
+        d.text(x_end, base, right, SIZE, 400, "box"),
+    ])
+
+
+def tag_end(d, x_right, y, parts, top=True):
+    """tag() aligned so its closing glyph ends at x_right."""
+    width = (sum(len(p[0]) for p in parts) + 2) * CW
+    return tag(d, x_right - width, y, parts, top)
+
+
+def graph(d, st, mode):
+    values = [c for _, c in st["weeks"]] if st else [0] * WEEKS
+    cols = 2 * len(values) - 1
+    pitch = (GX1 - GX0) / (cols - 1)
+    rows = int((GY1 - GY0) / pitch) + 1
+    top = GY1 - (rows - 1) * pitch
+    out = []
+
+    # the idle matrix every dot sits in, like an unlit braille cell
+    pid = d.uid("cell")
+    d.define(f'<pattern id="{pid}" width="{n(pitch)}" height="{n(pitch)}" patternUnits="userSpaceOnUse" '
+             f'x="{n(GX0 - pitch / 2)}" y="{n(GY1 - pitch / 2)}"><circle cx="{n(pitch / 2)}" '
+             f'cy="{n(pitch / 2)}" r="0.8" fill="{d.c("line")}"/></pattern>')
+    out.append(f'<rect x="{n(GX0 - pitch / 2)}" y="{n(top - pitch / 2)}" width="{n(GX1 - GX0 + pitch)}" '
+               f'height="{n(GY1 - top + pitch)}" fill="url(#{pid})" opacity="0.8"/>')
+
+    vmax = max(values)
+    if vmax:
+        lo, mid, hi = ramp_stops(d)
+        d.define(f'<linearGradient id="heat" gradientUnits="userSpaceOnUse" x1="0" y1="{n(GY1)}" '
+                 f'x2="0" y2="{n(top)}"><stop offset="0" stop-color="{lo}"/>'
+                 f'<stop offset="0.5" stop-color="{mid}"/><stop offset="1" stop-color="{hi}"/>'
+                 f'</linearGradient>', key="heat")
+        # one dotted column per half week: a round-capped line dashed every `pitch`
+        lines = []
+        for col in range(cols):
+            i, odd = divmod(col, 2)
+            v = (values[i] + values[i + 1]) / 2 if odd else values[i]
+            level = 0 if v <= 0 else max(1, math.ceil(v / vmax * rows))
+            if level:
+                x = n(GX0 + col * pitch)
+                lines.append(f'<line x1="{x}" y1="{n(GY1)}" x2="{x}" '
+                             f'y2="{n(GY1 - (level - 1) * pitch - 0.01)}"/>')
+        out.append(f'<g stroke="url(#heat)" stroke-width="2.8" stroke-linecap="round" '
+                   f'stroke-dasharray="0 {n(pitch)}">{"".join(lines)}</g>')
+        # scale: the busiest week at the top row, zero on the baseline
+        out.append(d.text(GX0 - 10, top + 3.8, str(vmax), 10.5, 700, "fg_soft", anchor="end"))
+        out.append(d.text(GX0 - 10, GY1 + 3.8, "0", 10.5, 400, "fg_dim", anchor="end"))
+        out.append(d.text(GX0 - 10, top + 15, "/wk", 9, 400, "fg_dim", anchor="end"))
+        # month ticks under the first week that starts in each month
+        last_x = -99
+        for i, (sunday, _) in enumerate(st["weeks"]):
+            if i and sunday.month == st["weeks"][i - 1][0].month:
+                continue
+            x = GX0 + 2 * i * pitch
+            if i == 0 and sunday.day > 14:
+                continue  # a partial month at the left edge would crowd the next label
+            if x - last_x < 30:
+                continue
+            out.append(d.text(x, GY1 + 19, MONTHS[sunday.month - 1], 10.5, 400, "fg_dim"))
+            last_x = x
+    else:
+        # a btop-style dialog over the idle matrix
+        cx, cy = (GX0 + GX1) / 2, (top + GY1) / 2
+        if mode == "placeholder":
+            lines = [("first sync pending", 15, 700, "fg_soft"),
+                     ("regenerated daily by GitHub Actions", 12, 400, "fg_dim")]
         else:
-            out.append(rect(d, bx, y + height - 1, bar_width, 1, "muted"))
-    if weeks:
-        first, last = weeks[0][0], st["today"]
-        out.append(label(d, x, y + height + 22, f"{MONTHS[first.month - 1].upper()} {first.year}", 10))
-        out.append(label(d, x + width, y + height + 22,
-                         f"{MONTHS[last.month - 1].upper()} {last.year}", 10, anchor="end"))
-    if not peak:
-        pending = mode == "placeholder"
-        message = "First sync pending" if pending else "No contributions yet"
-        explanation = "The daily workflow will draw this graph." if pending else "This calendar has no recorded contributions."
-        out.append(rect(d, x, y + height / 2 - 28, width, 64, "bg"))
-        out.append(display(d, x + width / 2, y + height / 2 - 2, message,
-                           22, "fg_soft", anchor="middle"))
-        out.append(label(d, x + width / 2, y + height / 2 + 20, explanation,
-                         10 if width > 400 else 9, anchor="middle"))
+            lines = [("no contributions in the last year", 15, 700, "fg_soft")]
+        w = max(len(s) * 0.6 * size for s, size, _, _ in lines) + 56
+        h = 30 + 22 * len(lines)
+        out.append(f'<rect x="{n(cx - w / 2)}" y="{n(cy - h / 2)}" width="{n(w)}" height="{n(h)}" '
+                   f'rx="6" fill="{d.c("bg")}" stroke="{d.c("box")}" stroke-width="{n(LINE)}"/>')
+        out.append(tag(d, cx - w / 2 + 10, cy - h / 2, [("²", "cyan", 700), ("sync", "fg_soft", 700)]))
+        y = cy - h / 2 + 34
+        for s, size, weight, fill in lines:
+            out.append(d.text(cx, y, s, size, weight, fill, anchor="middle"))
+            y += 22
+    if mode == "demo":
+        out.append(d.text((GX0 + GX1) / 2, (top + GY1) / 2 + 15, "DEMO DATA", 46, 800, "amber",
+                          anchor="middle", opacity="0.16"))
     return "".join(out)
 
 
-def metric(d, x, y, value, caption, size, width):
-    text = str(value)
-    fitting = min(size, size * width / max(1, display_width(text, size)))
-    return display(d, x, y, text, fitting) + label(d, x, y + 23, caption, 10)
+def stats_box(d, st, login):
+    out = [box(d, SX, SY, SW, SH, 6), tag(d, SX + 10, SY, [(login, "fg_soft", 700)])]
+    x0, cols = SX + 14, int((SW - 28) / CW)
+    x1 = x0 + cols * CW
+    dash = "—"
 
+    def plural(k):
+        return f"{k} day" if k == 1 else f"{k} days"
 
-def render(theme, st, login, mode, synced, compact=False):
-    """Render an honest, readable report in desktop and phone proportions."""
     if st:
         busiest = st["busiest"]
-        desc = (f"Contributions per week: {st['total']:,} in total, "
+        rows = [
+            ("contributions", f"{st['total']:,}", "fg_bright", 700),
+            ("current streak", plural(st["current"]), "fg", 400),
+            ("longest streak", plural(st["longest"]), "fg", 400),
+            ("busiest day", f"{busiest[0].isoformat()} · {busiest[1]}" if busiest else dash, "fg", 400),
+            ("most active", DAY_NAMES[st["top"]] if st["top"] is not None else dash, "cyan", 700),
+        ]
+    else:
+        rows = [(label, dash, "fg_dim", 400) for label in
+                ("contributions", "current streak", "longest streak", "busiest day", "most active")]
+    y = SY + 23
+    for label, value, color, weight in rows:
+        if value == dash:
+            color, weight = "fg_dim", 400
+        out.append(d.text(x0, y, label, SIZE, 400, "fg_dim"))
+        out.append(d.text(x1, y, value, SIZE, weight, color, anchor="end"))
+        y += 16.5
+    out.append(f'<path d="M{n(x0)} {n(y - 8)}H{n(x1)}" stroke="{d.c("line")}" stroke-width="1"/>')
+
+    # btop-style meters: each weekday's share, scaled so the busiest weekday is full
+    y += 9
+    cells = cols - 9
+    shares = st["weekdays"] if st else [0] * 7
+    total, peak = sum(shares), max(shares)
+    for i, name in enumerate(WEEKDAYS):
+        is_top = st is not None and st["top"] == i
+        out.append(d.text(x0, y, name, SIZE, 700 if is_top else 400, "cyan" if is_top else "fg_dim"))
+        lit = round(shares[i] / peak * cells) if peak else 0
+        rects = []
+        for j in range(cells):
+            fill = ramp(d, j / (cells - 1)) if j < lit else d.c("bg_raised" if d.theme == "dark" else "line")
+            rects.append(f'<rect x="{n(x0 + (4 + j) * CW + 0.7)}" y="{n(y - 8.3)}" width="{n(CW - 1.4)}" '
+                         f'height="8" rx="1" fill="{fill}"/>')
+        out.append("".join(rects))
+        pct = f"{round(100 * shares[i] / total)}%" if total else dash
+        out.append(d.text(x1, y, pct, SIZE, 400, "fg" if is_top else "fg_dim", anchor="end"))
+        y += 14.5
+    return "".join(out)
+
+
+def render(theme, st, login, mode, synced):
+    if st:
+        b = st["busiest"]
+        desc = (f"Contributions per week over the last 52 weeks: {st['total']:,} in total, "
                 f"a current streak of {st['current']} days and a longest of {st['longest']} days"
-                + (f", busiest on {busiest[0].isoformat()} with {busiest[1]}" if busiest else "")
+                + (f", busiest on {b[0].isoformat()} with {b[1]}" if b else "")
                 + (f", most active on {DAY_NAMES[st['top']]}s" if st["top"] is not None else "") + ".")
     else:
         desc = "Contribution activity: the first sync is pending; GitHub Actions redraws this panel daily."
     if mode == "demo":
         desc = "DEMO DATA, not real activity. " + desc
-    w, h = (440, COMPACT_H) if compact else (FULL_W, H)
-    pad = 24 if compact else 32
-    d = document(w, h, theme, f"{login}: contribution activity", desc)
-    d.add(rect(d, 0, 0, w, h))
-    d.add(rule(d, pad, 0.5, w - pad, 0.5, "line"))
-    d.add(label(d, pad, 32, "07 / FIELD ACTIVITY", 10, "accent"))
-    source = "DEMO DATA" if mode == "demo" else "PUBLIC CONTRIBUTIONS"
-    d.add(label(d, w - pad, 32, source, 10, "amber" if mode == "demo" else "fg_dim", anchor="end"))
-    d.add(display(d, pad, 85, "A year in motion.", 36 if compact else 44))
-    if not compact:
-        d.add(label(d, w - pad, 81, f"@{login}", 12, anchor="end"))
-    d.add(rule(d, pad, 108, w - pad, 108))
-
-    total = f"{st['total']:,}" if st else "—"
-    current = st["current"] if st else "—"
-    longest = st["longest"] if st else "—"
-    if compact:
-        d.add(metric(d, 24, 162, total, "CONTRIBUTIONS", 46, 137))
-        d.add(metric(d, 184, 162, current, "CURRENT / DAYS", 36, 99))
-        d.add(metric(d, 311, 162, longest, "LONGEST / DAYS", 36, 105))
-        d.add(graph(d, st, mode, 24, 238, 392, 175))
-        d.add(rule(d, 24, 452, 416, 452))
-        stamp = "FIRST SYNC PENDING" if mode == "placeholder" else f"SYNC {synced}"
-        d.add(label(d, 24, 475, stamp, 10))
+    d = Doc(FULL_W, H, theme, f"{login}: contribution activity", desc)
+    d.css("@keyframes live{0%,100%{opacity:1}50%{opacity:.25}}.live{animation:live 2.4s ease-in-out infinite}")
+    d.add(d.window(MARGIN, MARGIN, FULL_W - 2 * MARGIN, H - 2 * MARGIN))
+    d.add(box(d, BX, BY, BW, BH, 7))
+    d.add(tag(d, BX + 12, BY, [("¹", "cyan", 700), ("activity", "fg_soft", 700)]))
+    d.add(tag_end(d, BX + BW - 12, BY, [("contributions per week", "fg_soft"),
+                                        (" · last 52 weeks", "fg_dim")]))
+    if mode == "placeholder":
+        d.add(tag(d, BX + 12, BY + BH, [("awaiting first sync", "fg_dim")], top=False))
     else:
-        d.add(graph(d, st, mode, 32, 156, 504, 136))
-        d.add(rule(d, 568, 140, 568, 308))
-        d.add(metric(d, 600, 190, total, "CONTRIBUTIONS", 54, 248))
-        d.add(metric(d, 600, 273, current, "CURRENT / DAYS", 36, 112))
-        d.add(metric(d, 736, 273, longest, "LONGEST / DAYS", 36, 112))
-        d.add(rule(d, 32, 326, 848, 326))
-        stamp = "FIRST SYNC PENDING" if mode == "placeholder" else f"SYNC {synced}"
-        d.add(label(d, 32, 347, stamp, 10))
-        d.add(label(d, 848, 347, "AUTO-REDRAWN DAILY", 10, anchor="end"))
+        d.add(tag(d, BX + 12, BY + BH, [("  synced ", "fg_dim"), (synced, "fg_soft")], top=False))
+        d.add(f'<circle class="live" cx="{n(BX + 12 + 1.5 * CW)}" cy="{n(BY + BH)}" r="3" '
+              f'fill="{d.c("cyan")}"/>')
+    if mode == "demo":
+        d.add(tag_end(d, BX + BW - 12, BY + BH, [("DEMO DATA", "amber", 700)], top=False))
+    d.add(graph(d, st, mode))
+    d.add(stats_box(d, st, login))
     return d
 
 
@@ -306,10 +420,8 @@ def main(argv=None):
 
     os.makedirs(out, exist_ok=True)
     for theme in THEMES:
-        for compact in (False, True):
-            suffix = "-compact" if compact else ""
-            path = render(theme, st, args.login, mode, synced, compact).save(f"activity-{theme}{suffix}.svg", out)
-            print(f"activity: wrote {path} ({os.path.getsize(path) / 1024:.1f} KiB)")
+        path = render(theme, st, args.login, mode, synced).save(f"activity-{theme}.svg", out)
+        print(f"activity: wrote {path} ({os.path.getsize(path) / 1024:.1f} KiB)")
 
 
 if __name__ == "__main__":

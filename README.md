@@ -1,141 +1,71 @@
-<!-- Custom vector artwork. Both themes, with dedicated mobile compositions. -->
+<!--
+  Every SVG on this page is drawn from scratch by tools/*.py (plain Python, no
+  dependencies): the curve is really y² = x³ − 3x + 5, and the lettering is
+  JetBrains Mono outlines. Rebuild with `python3 tools/build.py`. The activity
+  panel is redrawn daily from live contribution data by .github/workflows/activity.yml.
+-->
 
-<p>
 <picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/hero-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/hero-light-compact.svg">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/hero-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/hero-light.svg">
-  <img alt="Ak1ra00. Small devices. Unreasonable ideas. Firmware, applied cryptography, and experiments beyond the spec." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/hero-dark.svg" width="100%">
+  <img alt="Ak1ra00: hardware hacker, applied cryptography, custom firmware. Beside the name, the elliptic curve y² = x³ − 3x + 5 plays out the group law P + Q = R." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/hero-dark.svg" width="100%">
 </picture>
+
+<p align="center">
+  <a href="https://vaultless.space"><b>vaultless.space</b></a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://ak1ra00.github.io/cc-q/">QUASAR</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://ak1ra00.github.io/cypherpunk-keys/">cypherpunk-keys</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="https://www.youtube.com/watch?v=ZxvO1nZaDog">vaultless, the 7-minute tour</a>
 </p>
 
-I build things that put you in control: passwords derived on demand, signing devices with a second life, and desktops drawn from real mathematics.
+**Firmware, applied cryptography, and hardware hacks that are more fun than they need to be.**
+I build password managers that derive instead of store, custom firmware for Coldcard hardware wallets
+(one now runs a shoot-'em-up, another raises a Tamagotchi), ESP32 gadgets, and a Hyprland desktop
+whose wallpapers are drawn from elliptic-curve math.
 
-<p>
-<a href="https://vaultless.space"><b>Try vaultless</b></a>&nbsp;&nbsp; / &nbsp;&nbsp;<a href="https://ak1ra00.github.io/cc-q/"><b>Explore QUASAR</b></a>&nbsp;&nbsp; / &nbsp;&nbsp;<a href="https://www.youtube.com/watch?v=ZxvO1nZaDog">Watch the vaultless walkthrough</a>
-</p>
-
-## Selected work
-
-<p>
-<a href="https://github.com/Ak1ra00/vaultless">
 <picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-light-compact.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-light.svg">
-  <img alt="01 / vaultless. A phrase in your head. A key on paper. Passwords derived with ristretto255 and HKDF. No password vault." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-dark.svg" width="100%">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-light.svg">
+  <img alt="fastfetch-style summary. OS: Omarchy, Arch Linux, Hyprland. Theme: Oracle. Editor: Neovim. Hosts: Coldcard Mk4, Coldcard Q, LilyGO T-Display. Languages: C, C++, Python, MicroPython, JavaScript, Lua. Crypto: ristretto255 OPRF, DLEQ, HKDF-SHA256, BIP39, BIP85. Vault: none, passwords are derived and never stored." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-dark.svg" width="100%">
 </picture>
-</a>
-</p>
+
+### ❯ selected work
 
 <p>
-<a href="https://github.com/Ak1ra00/cc-q">
-<picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-light-compact.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-light.svg">
-  <img alt="02 / QUASAR. A Coldcard Q with a second life as arcade hardware: a shoot-’em-up, Tetris and neon PAC-MAN. Dedicated game firmware, without Bitcoin code." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-dark.svg" width="100%">
-</picture>
-</a>
+<a href="https://github.com/Ak1ra00/vaultless"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-light.svg"><img alt="vaultless: a deterministic password manager. Each password is derived from a phrase in your head and a key printed on paper; nothing is stored." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-vaultless-dark.svg" width="50%"></picture></a><a href="https://github.com/Ak1ra00/cc-q"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-light.svg"><img alt="QUASAR: custom firmware that turns a Coldcard Q into a handheld game console with a shoot-'em-up, Tetris and neon PAC-MAN." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-quasar-dark.svg" width="50%"></picture></a>
+<a href="https://github.com/Ak1ra00/CC"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-light.svg"><img alt="COLDCARD Tamagotchi: a retired Bitcoin signing device that keeps a small creature alive, with genes from the hardware TRNG." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-dark.svg" width="50%"></picture></a><a href="https://github.com/Ak1ra00/hw-flash"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-light.svg"><img alt="Atlantis DeepSea: a BIP85 hardware password manager for the LilyGO T-Display (ESP32), sending passwords over BLE." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-dark.svg" width="50%"></picture></a>
+<a href="https://github.com/Ak1ra00/oracle"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-light.svg"><img alt="Oracle: a complete Omarchy desktop theme whose 4K wallpapers are rendered from real elliptic-curve and OPRF math." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-dark.svg" width="50%"></picture></a><a href="https://github.com/Ak1ra00/opencare"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-light.svg"><img alt="OpenCare: a Windows 10 and 11 maintenance toolkit where every fix is previewed and reversible." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-dark.svg" width="50%"></picture></a>
 </p>
 
-## Further experiments
+**Also in the lab**
 
-<p>
-<a href="https://github.com/Ak1ra00/CC">
-<picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-light-compact.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-light.svg">
-  <img alt="03 / COLDCARD Tamagotchi. A retired signing device, a creature worth keeping alive. Hardware-random genetics; the microSD card carries the pet." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-tamagotchi-dark.svg" width="100%">
-</picture>
-</a>
-</p>
-
-<p>
-<a href="https://github.com/Ak1ra00/hw-flash">
-<picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-light-compact.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-light.svg">
-  <img alt="04 / Atlantis DeepSea. One seed. Passwords on demand. A BIP85 password manager for LilyGO T-Display, with encrypted seed storage and BLE output." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-deepsea-dark.svg" width="100%">
-</picture>
-</a>
-</p>
-
-<p>
-<a href="https://github.com/Ak1ra00/oracle">
-<picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-light-compact.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-light.svg">
-  <img alt="05 / Oracle. Mathematics across the entire desktop. An Omarchy and Hyprland theme with six generated 4K wallpapers drawn from elliptic curves and OPRF constructions." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-oracle-dark.svg" width="100%">
-</picture>
-</a>
-</p>
-
-<p>
-<a href="https://github.com/Ak1ra00/opencare">
-<picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-light-compact.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-light.svg">
-  <img alt="06 / OpenCare. Preview the fix. Keep the undo. A Windows 10 and 11 maintenance toolkit with read-only scans, change previews and backed-up changes." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/card-opencare-dark.svg" width="100%">
-</picture>
-</a>
-</p>
+- [**cypherpunk-keys**](https://github.com/Ak1ra00/cypherpunk-keys): every Hyprland keybinding of a real Omarchy setup, searchable on one page
+- [**Sec21**](https://github.com/Ak1ra00/Sec21): a cypherpunk terminal firmware for the Coldcard Q (early work in progress)
 
 <details>
-<summary><b>See the work in motion</b> — actual gameplay and the vaultless handshake</summary>
+<summary><b>Screenshots</b>: QUASAR on a Coldcard Q, and the vaultless handshake</summary>
 <br>
-<p>
-<a href="https://github.com/Ak1ra00/cc-q"><img alt="QUASAR: the Dyson Array boss fight recorded from the simulator" src="https://raw.githubusercontent.com/Ak1ra00/cc-q/main/docs/showcase/stage3-dysonarray.gif" width="49%"></a>
-<a href="https://github.com/Ak1ra00/cc-q"><img alt="PAC-MAN Neon: frozen ghosts shatter in the Coldcard Q simulator" src="https://raw.githubusercontent.com/Ak1ra00/cc-q/main/docs/showcase/pacman-neon.gif" width="49%"></a>
-</p>
-<p>
-<a href="https://github.com/Ak1ra00/vaultless"><img alt="An illustrated vaultless handshake: the paper key acts on the blinded point of an elliptic curve" src="https://raw.githubusercontent.com/Ak1ra00/vaultless/main/docs/handshake.jpg" width="100%"></a>
+<p align="center">
+<a href="https://github.com/Ak1ra00/cc-q"><img alt="QUASAR stage 3, the Dyson Array boss fight, recorded from the game's simulator" src="https://raw.githubusercontent.com/Ak1ra00/cc-q/main/docs/showcase/stage3-dysonarray.gif" height="240"></a>
+<a href="https://github.com/Ak1ra00/vaultless"><img alt="The vaultless handshake: the demo key stamping the blinded point B on y² = x³ − 3x + 5" src="https://raw.githubusercontent.com/Ak1ra00/vaultless/main/docs/handshake.jpg" height="240"></a>
+<a href="https://github.com/Ak1ra00/cc-q"><img alt="PAC-MAN Neon on a Coldcard Q: a FREEZE, and the iced ghosts shatter one after another" src="https://raw.githubusercontent.com/Ak1ra00/cc-q/main/docs/showcase/pacman-neon.gif" height="240"></a>
 </p>
 </details>
 
-## On the workbench
+### ❯ activity
 
-<p>
 <picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-light-compact.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-light.svg">
-  <img alt="C, C++, Python, MicroPython, JavaScript and Lua. Coldcard Mk4, Coldcard Q, ESP32 and LilyGO T-Display. Arch, Omarchy, Hyprland, Neovim and Oracle." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/fetch-dark.svg" width="100%">
-</picture>
-</p>
-
-Also in the lab: [**cypherpunk-keys**](https://ak1ra00.github.io/cypherpunk-keys/), a searchable map of my keyboard-first desktop; and [**Sec21**](https://github.com/Ak1ra00/Sec21), an early experiment in Coldcard Q terminal firmware.
-
-## Field activity
-
-<p>
-<picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/output/activity-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/output/activity-light-compact.svg">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/output/activity-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/output/activity-light.svg">
-  <img alt="Live GitHub contribution activity: weekly contributions, total contributions, current streak and longest streak. Regenerated daily by GitHub Actions." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/output/activity-dark.svg" width="100%">
+  <img alt="Contribution activity over the last 52 weeks, with streaks and the busiest weekdays, redrawn daily from live data." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/output/activity-dark.svg" width="100%">
 </picture>
-</p>
 
-<p>
 <picture>
-  <source media="(max-width: 600px) and (prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/footer-dark-compact.svg">
-  <source media="(max-width: 600px) and (prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/footer-light-compact.svg">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/footer-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/footer-light.svg">
-  <img alt="Own the keys. Rewrite the rules. Ak1ra00 / always tinkering." src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/footer-dark.svg" width="100%">
+  <img alt="nothing stored, nothing to leak" src="https://raw.githubusercontent.com/Ak1ra00/Ak1ra00/main/assets/footer-dark.svg" width="100%">
 </picture>
-</p>
+
+<!--
+   ┌───────────────────────────────────────────────┐
+   │  you read the source. same phrase, same key,  │
+   │  same password, forever:  S = k·P             │
+   └───────────────────────────────────────────────┘
+-->
