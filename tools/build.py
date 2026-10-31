@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Rebuild every static SVG in assets/ from scratch.
 
-    python3 tools/build.py                 hero, fastfetch card, project cards, footer
+    python3 tools/build.py                 hero, workbench, project cards, footer
     python3 tools/activity.py --out DIR    the live activity panel (CI redraws it daily)
     python3 tools/make_glyphs.py           only when the character set changes (needs fonttools)
 
-Plain Python 3, no dependencies. Each module draws both themes: dark is the
-Oracle desktop palette, light is the same three inks on paper.
+Plain Python 3, no dependencies. Each module draws dark and light themes,
+with separate desktop and compact compositions.
 """
 
 import importlib
