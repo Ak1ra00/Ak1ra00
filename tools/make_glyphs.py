@@ -8,10 +8,15 @@ and system monospace fonts differ in width and shape.
 Only needed when the character set or weights change; build.py and the
 activity workflow read glyphs.json and need nothing but the standard library.
 
+JetBrains Mono has no Tifinagh, so efre's name ⵉⴼⵔⵉ comes from Noto Sans
+Tifinagh (the font efre's own UI uses) into a separate glyphs-tifinagh.json.
+
 Usage:
     tools/make_glyphs.py [--fonts /usr/share/fonts/truetype/jetbrains-mono]
+    tools/make_glyphs.py --tifinagh noto-sans-tifinagh-tifinagh-400-normal.woff
 
-Requires: fonttools. Font: JetBrains Mono (SIL OFL 1.1, see fonts/OFL.txt).
+Requires: fonttools. Fonts: JetBrains Mono and Noto Sans Tifinagh, both SIL OFL
+1.1 (fonts/OFL.txt, fonts/OFL-NotoSansTifinagh.txt).
 """
 
 import argparse
@@ -33,12 +38,37 @@ CHARSET = (
 )
 
 
+TIFINAGH = "ⵉⴼⵔ"  # the letters of ⵉⴼⵔⵉ
+
+
+def tifinagh(path, dest):
+    """Proportional outlines, with advances, for the letters of efre's name."""
+    font = TTFont(path)
+    cmap, glyphs = font.getBestCmap(), font.getGlyphSet()
+    table = {}
+    for ch in TIFINAGH:
+        pen = SVGPathPen(glyphs)
+        glyphs[cmap[ord(ch)]].draw(pen)
+        table[ch] = {"d": pen.getCommands(), "adv": glyphs[cmap[ord(ch)]].width}
+    out = {"font": "Noto Sans Tifinagh", "license": "SIL OFL 1.1 (tools/fonts/OFL-NotoSansTifinagh.txt)",
+           "upm": font["head"].unitsPerEm, "glyphs": table}
+    with open(dest, "w", encoding="utf-8") as fh:
+        json.dump(out, fh, ensure_ascii=False, separators=(",", ":"))
+    print(f"wrote {dest} ({len(table)} glyphs)")
+
+
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     ap = argparse.ArgumentParser()
     ap.add_argument("--fonts", default="/usr/share/fonts/truetype/jetbrains-mono")
     ap.add_argument("--out", default=os.path.join(here, "glyphs.json"))
+    ap.add_argument("--tifinagh", metavar="FONT",
+                    help="write glyphs-tifinagh.json from Noto Sans Tifinagh instead")
     args = ap.parse_args()
+
+    if args.tifinagh:
+        tifinagh(args.tifinagh, os.path.join(here, "glyphs-tifinagh.json"))
+        return
 
     out = {"font": "JetBrains Mono 2.304", "license": "SIL OFL 1.1 (tools/fonts/OFL.txt)",
            "upm": 1000, "advance": 600, "weights": {}}

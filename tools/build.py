@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rebuild every static SVG in assets/ from scratch.
 
-    python3 tools/build.py                 hero, fastfetch card, project cards, footer
+    python3 tools/build.py                 hero, fastfetch card, featured and project cards, footer
     python3 tools/activity.py --out DIR    the live activity panel (CI redraws it daily)
     python3 tools/make_glyphs.py           only when the character set changes (needs fonttools)
 
@@ -19,7 +19,7 @@ sys.path.insert(0, HERE)
 
 from svgkit import ASSETS  # noqa: E402
 
-MODULES = ("hero", "fetch", "cards", "footer")
+MODULES = ("hero", "fetch", "featured", "cards", "footer")
 
 
 def main():

@@ -389,7 +389,7 @@ ILLUSTRATIONS = {
 
 # ------------------------------------------------------------------- cards --
 
-def chip_row(d, x, y, chips, accent):
+def chip_row(d, x, y, chips, accent, x1=X1):
     out = []
     for label in chips:
         w = tw(label, CHIP_SIZE) + 2 * CHIP_PAD
@@ -399,8 +399,8 @@ def chip_row(d, x, y, chips, accent):
         out.append(d.text(x + CHIP_PAD, y + CHIP_H / 2 + CHIP_SIZE * 0.36, label, CHIP_SIZE, 400,
                           accent if d.theme == "light" else f"{accent}_bright"))
         x += w + CHIP_GAP
-    if x - CHIP_GAP > X1:
-        raise ValueError(f"chips overflow by {x - CHIP_GAP - X1:.1f}px: {chips}")
+    if x - CHIP_GAP > x1:
+        raise ValueError(f"chips overflow by {x - CHIP_GAP - x1:.1f}px: {chips}")
     return "".join(out)
 
 

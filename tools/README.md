@@ -12,11 +12,13 @@ screenshot or a third-party widget. Each script writes a dark and a light varian
 svgkit.py       shared kit: palettes, Hyprland-style windows, text as glyph outlines
 hero.py         assets/hero-*.svg      name + the group law on y² = x³ − 3x + 5, animated
 fetch.py        assets/fetch-*.svg     fastfetch card with a braille plot of y² = x³ − 3x + 1
+featured.py     assets/card-efre-*.svg the full-width efre card: a security key in a cave
 cards.py        assets/card-*-*.svg    the six project cards
 footer.py       assets/footer-*.svg    sign-off
 activity.py     activity-*.svg         contribution panel, redrawn daily by CI on the `output` branch
-build.py        runs hero, fetch, cards and footer, then checks every SVG parses
-make_glyphs.py  rebuilds glyphs.json from the JetBrains Mono TTFs (needs fonttools)
+build.py        runs hero, fetch, featured, cards and footer, then checks every SVG parses
+make_glyphs.py  rebuilds glyphs.json from the JetBrains Mono TTFs (needs fonttools), and
+                glyphs-tifinagh.json (efre's name, ⵉⴼⵔⵉ) from Noto Sans Tifinagh
 ```
 
 ```bash
@@ -30,7 +32,9 @@ Everything except `make_glyphs.py` is plain Python 3 with no dependencies.
 which cannot load web fonts, and system monospace fonts differ in width.
 `glyphs.json` holds JetBrains Mono's outlines, and each SVG places them with
 `<use>`, so the lettering is identical on every machine. JetBrains Mono is under
-the SIL Open Font License 1.1; see [`fonts/OFL.txt`](fonts/OFL.txt).
+the SIL Open Font License 1.1; see [`fonts/OFL.txt`](fonts/OFL.txt). The Tifinagh
+letters come from Noto Sans Tifinagh, also OFL 1.1; see
+[`fonts/OFL-NotoSansTifinagh.txt`](fonts/OFL-NotoSansTifinagh.txt).
 
 **Motion.** Animations are CSS inside each SVG. Every file honours
 `prefers-reduced-motion` and shows its finished state when motion is off.

@@ -51,10 +51,10 @@ def facts(theme):
                    ("amber", "amber", 700)]),
         ("Editor", [("Neovim", "fg")]),
         ("Hosts", dotted("Coldcard Mk4", "Coldcard Q", "LilyGO T-Display")),
-        ("Langs", dotted("C", "C++", "Python", "MicroPython", "JavaScript", "Lua")),
+        ("Langs", dotted("C", "C++", "Rust", "Python", "MicroPython", "JavaScript", "Lua")),
         ("Crypto", dotted("ristretto255 OPRF", "DLEQ", "HKDF-SHA256", "BIP39", "BIP85")),
         ("Builds", dotted("firmware", "password managers", "games", "themes")),
-        ("Vault", [("none", "amber", 700), (" — passwords are derived, never stored", "fg")]),
+        ("Vault", [("none", "amber", 700), (" — or a cave only a YubiKey opens", "fg")]),
         ("Entropy", [("STM32 TRNG", "fg"), (" + your scribbles", "fg_soft")]),
         ("Uptime", [("always compiling", "fg")]),
     ]
@@ -178,10 +178,10 @@ def build(theme):
             "A fastfetch-style system summary. Logo: a braille-dot plot of the elliptic curve "
             "y² = x³ − 3x + 1 with a marked point P. OS: Omarchy, Arch Linux, Hyprland. "
             "Theme: Oracle (cyan, violet, amber). Editor: Neovim. Hosts: Coldcard Mk4, "
-            "Coldcard Q, LilyGO T-Display. Langs: C, C++, Python, MicroPython, JavaScript, Lua. "
-            "Crypto: ristretto255 OPRF, DLEQ, HKDF-SHA256, BIP39, BIP85. Builds: firmware, "
-            "password managers, games, themes. Vault: none, passwords are derived, never "
-            "stored. Entropy: STM32 TRNG plus your scribbles. Uptime: always compiling.")
+            "Coldcard Q, LilyGO T-Display. Langs: C, C++, Rust, Python, MicroPython, JavaScript, "
+            "Lua. Crypto: ristretto255 OPRF, DLEQ, HKDF-SHA256, BIP39, BIP85. Builds: firmware, "
+            "password managers, games, themes. Vault: none, or a cave only a YubiKey opens. "
+            "Entropy: STM32 TRNG plus your scribbles. Uptime: always compiling.")
     d.css(
         "@keyframes fade{from{opacity:0}}"
         "@keyframes on{from{opacity:0}to{opacity:0}}"
